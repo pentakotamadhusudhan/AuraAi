@@ -29,8 +29,8 @@ Aura AI is a high-performance Flutter application designed to synchronize your f
 ### 1. Prerequisites
 
 * Flutter SDK (3.16.0 or higher)
-* Android Studio / Xcode
-* An Android/iOS device or emulator
+* Android Studio 
+* An Android device
 
 ### 2. Installation
 
