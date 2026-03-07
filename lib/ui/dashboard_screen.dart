@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:gymda/service/initative_service.dart';
-import 'package:gymda/service/notification_service.dart';
-import 'package:gymda/ui/prograss_predection.dart';
+import 'package:auraai/service/initative_service.dart';
+import 'package:auraai/service/notification_service.dart';
+import 'package:auraai/ui/prograss_predection.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -10,8 +10,8 @@ import 'package:timezone/timezone.dart' as tz;
 
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:gymda/service/water_service.dart';
-import 'package:gymda/ui/profile_screen.dart';
+import 'package:auraai/service/water_service.dart';
+import 'package:auraai/ui/profile_screen.dart';
 import '../models/user_models.dart';
 import '../service/database_helper.dart';
 import '../service/health_service.dart';

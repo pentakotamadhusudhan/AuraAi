@@ -1,10 +1,10 @@
 import 'dart:io';
 
+import 'package:auraai/service/health_service.dart';
+import 'package:auraai/service/notification_service.dart';
+import 'package:auraai/ui/login_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:gymda/service/health_service.dart';
-import 'package:gymda/service/notification_service.dart';
-import 'package:gymda/ui/dashboard_screen.dart';
-import 'package:gymda/ui/login_screen.dart';
+
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'models/user_models.dart';

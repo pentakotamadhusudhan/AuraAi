@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gymda/models/user_models.dart';
-import 'package:gymda/service/notification_service.dart';
-import 'package:gymda/service/user_profile_service.dart';
+import 'package:auraai/models/user_models.dart';
+import 'package:auraai/service/notification_service.dart';
+import 'package:auraai/service/user_profile_service.dart';
 import '../service/health_service.dart';
 
 class ProfileSetupScreen extends StatefulWidget {

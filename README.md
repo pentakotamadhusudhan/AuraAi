@@ -24,6 +24,12 @@ Aura AI is a high-performance Flutter application designed to synchronize your f
 * **Physics Engine:** [water_bottle](https://pub.dev/packages/water_bottle)
 * **Storage:** SharedPreferences (Persistent User Profiles)
 
+## ScreenShots
+
+<div align="center">
+  <img src="images/login.png"  alt="login"/>
+  </div>
+
 ## 🚀 Getting Started
 
 ### 1. Prerequisites

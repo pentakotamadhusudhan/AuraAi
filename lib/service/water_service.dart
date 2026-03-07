@@ -1,6 +1,6 @@
 
 
-import 'package:gymda/models/user_models.dart';
+import 'package:auraai/models/user_models.dart';
 
 import 'database_helper.dart';
 import 'notification_service.dart';

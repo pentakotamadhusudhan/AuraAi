@@ -1,4 +1,4 @@
-import 'package:gymda/models/user_models.dart';
+import 'package:auraai/models/user_models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class InitialService {

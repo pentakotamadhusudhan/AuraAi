@@ -24,6 +24,7 @@ dependencies:
   flutter_timezone:
   timezone:
   water_bottle: ^0.0.8
+  flutter_heatmap_calendar:
 
 
 dev_dependencies:

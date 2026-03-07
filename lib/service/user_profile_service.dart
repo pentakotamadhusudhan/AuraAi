@@ -1,4 +1,4 @@
-import 'package:gymda/service/notification_service.dart';
+import 'package:auraai/service/notification_service.dart';
 
 import '../models/user_models.dart';
 import 'health_service.dart';

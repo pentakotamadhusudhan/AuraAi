@@ -80,12 +80,12 @@ class DatabaseHelper {
     );
 
     // 2. Get total gym sessions in the last 7 days
-    final gymData = await db.rawQuery(
+    final auraaita = await db.rawQuery(
         "SELECT COUNT(*) as session_count FROM gym_logs WHERE date >= date('now', '-7 days')"
     );
 
     double avgWater = (waterData.first['avg_water'] ?? 0.0) as double;
-    int gymSessions = (gymData.first['session_count'] ?? 0) as int;
+    int gymSessions = (auraaita.first['session_count'] ?? 0) as int;
 
     // 3. Simple Rule-Based AI Engine
     if (gymSessions >= 4 && avgWater >= 2000) {
