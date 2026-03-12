@@ -26,9 +26,10 @@ Aura AI is a high-performance Flutter application designed to synchronize your f
 
 ## ScreenShots
 
-<div align="center">
-  <img src="images/login.png"  alt="login"/>
-  </div>
+<div class="container">
+  <img src="images/profile.png" alt="login"/>
+</div>
+
 
 ## 🚀 Getting Started
 

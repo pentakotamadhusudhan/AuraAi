@@ -18,8 +18,8 @@ class UserProfileService {
 
   void reminderSetService() {
     print("wake up time ${UserProfile.wakingHours}");
-    NotificationService.scheduleDailyWakeUp(1,UserProfile.wakeUpTime!);
-    NotificationService.scheduleDailyWakeUp(2,UserProfile.sleepTime!);
+    // NotificationService.scheduleDailyWakeUp(1,UserProfile.wakeUpTime!);
+    // NotificationService.scheduleDailyWakeUp(2,UserProfile.sleepTime!);
 
   }
 }

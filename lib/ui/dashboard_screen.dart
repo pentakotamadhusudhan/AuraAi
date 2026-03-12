@@ -1,3 +1,4 @@
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:auraai/service/initative_service.dart';
@@ -147,14 +148,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () async {
-            await NotificationService.scheduleNotification(
-              id: 1,
-              title: "Water drink",
-              body: "Water a glass of water",
-              scheduleTime: tz.TZDateTime.now(
-                tz.local,
-              ).add(const Duration(seconds: 10)),
+            // NotificationService.showNotification(
+            //   title: "AuraAI",
+            //   body: "Button pressed notification",
+            // );
+            // print("time ${ tz.TZDateTime.now(
+            //   tz.local,
+            // ).add(const Duration(seconds: 10))}");
+
+            final scheduleTime = tz.TZDateTime.now(
+              tz.local,
+            ).add(const Duration(seconds: 30));
+
+            await NotificationService().zonedScheduleNotification(
+              id: 2,
+              title: "AuraAI",
+              body: "Test Notification",
+              scheduleTime: scheduleTime,
             );
+            var xc = await NotificationService().notifications
+                .pendingNotificationRequests();
+            print("notificatins $xc");
           },
           child: Icon(Icons.local_drink),
         ),
@@ -168,7 +182,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
           elevation: 0,
           actions: [
             IconButton(
-              onPressed: () {},
+              onPressed: () async {
+                // PopupExample();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => PopupExample()),
+                );
+              },
               icon: const Icon(Icons.notifications_none, color: Colors.black),
             ),
             CircleAvatar(
@@ -469,6 +489,75 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class PopupExample extends StatefulWidget {
+  const PopupExample({super.key});
+
+  @override
+  State<PopupExample> createState() => _PopupExampleState();
+}
+
+class _PopupExampleState extends State<PopupExample> {
+  final FlutterLocalNotificationsPlugin notifications =
+      FlutterLocalNotificationsPlugin();
+  List<PendingNotificationRequest> pending = [];
+  void showPendingNotifications() async {
+    pending = await NotificationService().notifications
+        .pendingNotificationRequests();
+    print('notifications screen ${pending}');
+    setState(() {
+      pending;
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    showPendingNotifications();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Notification Popup"),
+
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await NotificationService().notifications.cancelAll();
+              setState(() {
+                pending;
+              });
+            },
+            icon: Icon(Icons.clear),
+          ),
+        ],
+      ),
+
+      body: Center(
+        child: SizedBox(
+          width: double.maxFinite,
+          child: ListView.builder(
+            shrinkWrap: true,
+            itemCount: pending.length,
+            itemBuilder: (context, index) {
+              PendingNotificationRequest n = pending[index];
+              String? payLoad = n.payload;
+              return ListTile(
+                leading: const Icon(Icons.notifications),
+                title: Text(n.title ?? "No Title"),
+                subtitle: Text(n.body ?? "No Body"),
+                trailing: Text("⏰${n.payload}"),
+              );
+            },
+          ),
+        ),
       ),
     );
   }

@@ -1,100 +1,101 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
 
-
 class NotificationService {
-  static final FlutterLocalNotificationsPlugin _notifications =
-  FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin notifications =
+      FlutterLocalNotificationsPlugin();
 
-  static Future<void> init() async {
-    const android = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const settings = InitializationSettings(android: android);
+  Future<void> initNotification() async {
+    const AndroidInitializationSettings androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    await _notifications.initialize(settings: settings);
+    const InitializationSettings settingsNotification = InitializationSettings(
+      android: androidSettings,
+    );
 
+    await notifications.initialize(settings: settingsNotification);
+    // Initialize timezone database
     tz.initializeTimeZones();
+
+    // Get device timezone
     final TimezoneInfo timezone = await FlutterTimezone.getLocalTimezone();
-    debugPrint("----------- time zone ${timezone.identifier}");
+
+    // Set timezone
     tz.setLocalLocation(tz.getLocation(timezone.identifier));
   }
 
-  static Future<void> scheduleNotification({
-    required int id,required String title,required String body,
-    required tz.TZDateTime scheduleTime
-}) async {
-    await _notifications
-        .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestExactAlarmsPermission();
+  Future<void> showNotification({
+    required String title,
+    required String body,
+  }) async {
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          'basic_channel',
+          'Basic Notifications',
+          importance: Importance.max,
+          priority: Priority.high,
+        );
 
-    await _notifications.zonedSchedule(
-     id:  id,
-      title:title,
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: androidDetails,
+    );
+
+    await notifications.show(
+      id: 0,
+      title: title,
+      body: body,
+      notificationDetails: notificationDetails,
+    );
+  }
+
+  Future<void> zonedScheduleNotification({
+    required int id,
+    required String title,
+    required String body,
+    required tz.TZDateTime scheduleTime,
+  }) async {
+    Map<String,String> pay_load = {
+      "time":"${scheduleTime.hour}:${scheduleTime.minute}:${scheduleTime.second}"
+    };
+    await FlutterLocalNotificationsPlugin().zonedSchedule(
+      id: id,
+      title: title,
       body: body,
       scheduledDate: scheduleTime,
       notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
-          'reminder_channel',
-          'Reminders',
-          importance: Importance.max,
-          priority: Priority.high,
-        ),
-      ),
-      androidScheduleMode: AndroidScheduleMode.exact,
-    );
-  }
-
-
-  static Future<void> scheduleDailyWakeUp(int id,DateTime wakeTime) async {
-    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    print("time zone$now");
-    // 1. Create the base time for TODAY
-    tz.TZDateTime scheduledDate = tz.TZDateTime(
-      tz.local,
-      now.year,
-      now.month,
-      now.day,
-      wakeTime.hour,
-      wakeTime.minute,
-    );
-
-    // 2. Critical: If 4:00 AM has already passed today, schedule for tomorrow
-    if (scheduledDate.isBefore(now)) {
-      scheduledDate = scheduledDate.add(const Duration(days: 1));
-    }
-
-    await _notifications.zonedSchedule(
-     id:  id, // Unique ID for WakeUp
-     title:  "WakeUp Call ☀️",
-      body: "Wake up, it's time to boost yourself!",
-      scheduledDate: scheduledDate,
-      notificationDetails: const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'daily_wake_up',
-          'Daily Alarms',
-          importance: Importance.max,
-          priority: Priority.high,
-          ongoing: true, // Set to true if you want it to stay until dismissed
+          'your channel id',
+          'your channel name',
+          channelDescription: 'your channel description',
         ),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-
-      // 🔥 THIS IS THE PART THAT MAKES IT REPEAT EVERY DAY
-      matchDateTimeComponents: DateTimeComponents.time,
+      payload: "${scheduleTime.hour}:${scheduleTime.minute}:${scheduleTime.second}",
     );
-    List<PendingNotificationRequest> notifications=await  _notifications.pendingNotificationRequests();
-    print("All notifications ${notifications}");
-    notifications.map((e) => print(e.id)).toList();
   }
 
+  Future<void> zonedScheduleAlarmClockNotification() async {
+    await notifications.zonedSchedule(
+      id: 123,
+      title: 'scheduled alarm clock title',
+      body: 'scheduled alarm clock body',
+      scheduledDate: tz.TZDateTime.now(
+        tz.local,
+      ).add(const Duration(seconds: 5)),
+      notificationDetails: const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'alarm_clock_channel',
+          'Alarm Clock Channel',
+          channelDescription: 'Alarm Clock Notification',
+        ),
+      ),
+      androidScheduleMode: AndroidScheduleMode.alarmClock,
+    );
+  }
 
-  // drinking water dehydration
-
-  static Future<void> scheduleHydrationRoutine({
+  Future<void> scheduleHydrationRoutine({
     required double totalGoalMl,
     required double cupSizeMl,
     required DateTime wakeTime,
@@ -103,7 +104,7 @@ class NotificationService {
     // 1. Clear previous water reminders (IDs 200-300 range)
     // You can also use cancelAll() if you are re-scheduling everything
     for (int i = 100; i < 200; i++) {
-      await _notifications.cancel(id: i);
+      await notifications.cancel(id: i);
     }
 
     // 2. Calculate the "Waking Window"
@@ -135,31 +136,23 @@ class NotificationService {
 
       // Don't schedule if it accidentally goes past sleep time
       if (scheduledDate.hour > sleepTime.hour ||
-          (scheduledDate.hour == sleepTime.hour && scheduledDate.minute > sleepTime.minute)) {
+          (scheduledDate.hour == sleepTime.hour &&
+              scheduledDate.minute > sleepTime.minute)) {
         continue;
       }
 
-      await _notifications.zonedSchedule(
+      await zonedScheduleNotification(
         id: 100 + i, // Unique ID in the 200 range
         title: "Drink Water 💧",
-        body:"Time for your ${cupSizeMl.toInt()}ml! Stay hydrated.",
-        scheduledDate: scheduledDate,
-        notificationDetails: const NotificationDetails(
-          android: AndroidNotificationDetails(
-            'water_reminders', 'Hydration',
-            importance: Importance.high,
-            priority: Priority.high,
-          ),
-        ),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        // uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.time, // Repeats daily
+        body: "Time for your ${cupSizeMl.toInt()}ml! Stay hydrated.",
+        scheduleTime: scheduledDate,
       );
     }
-    print("Scheduled $totalReminders water reminders every $intervalMinutes minutes.");
+    print(
+      "Scheduled $totalReminders water reminders every $intervalMinutes minutes.",
+    );
     // Verify scheduling
-    var pending = await _notifications.pendingNotificationRequests();
+    var pending = await notifications.pendingNotificationRequests();
     pending.forEach((e) => print("Water Reminder ID: ${e.id} at ${e.payload}"));
   }
-
 }

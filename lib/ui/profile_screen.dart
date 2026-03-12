@@ -139,8 +139,8 @@ class _ProfileSetupScreenState extends State<ProfileSetupScreen> {
                 }
                 UserProfileService().reminderSetService();
 
-                // Example values from your UserProfile model
-                await NotificationService.scheduleHydrationRoutine(
+               // // Example values from your UserProfile model
+                await NotificationService().scheduleHydrationRoutine(
                   totalGoalMl: UserProfile.waterGoal, // e.g., 3000.0
                   cupSizeMl: 250.0, // Standard glass size
                   wakeTime: UserProfile.wakeUpTime!,
