@@ -26,6 +26,8 @@ dependencies:
   water_bottle: ^0.0.8
   flutter_heatmap_calendar:
 
+  flutter_launcher_icons:
+
 
 dev_dependencies:
   flutter_test:
@@ -79,3 +81,15 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_icons:
+  android: "launcher_icon" # or true to override the default name
+  ios: true
+  image_path: "assets/icons/icon.png"
+  # Optional: For Android adaptive icons (Android 8.0+), specify background and foreground
+  # adaptive_icon_background: "#ffffff"
+  # adaptive_icon_foreground: "assets/icon/foreground.png"
+  # Optional: configure for web, windows, or macos if needed
+  # web:
+  #   generate: true
+  #   image_path: "assets/icon/icon.png"
